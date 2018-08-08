@@ -10,11 +10,13 @@ function madeDone(order){
 
 function addTodo() {
     let todoInput = document.getElementById('input');// ввод
-    let todoInputValue = todoInput.value;//значение ввода
-    list.push({ title: todoInputValue, done: false });// прибавляем объект с tittle: значение ввода в массив
-    todoInput.value = '';//очищаем строку ввода
-    console.log(list);
-    renderList();
+    if (todoInput.value !== '') {
+        let todoInputValue = todoInput.value;//значение ввода
+        list.push({title: todoInputValue, done: false});// прибавляем объект с tittle: значение ввода в массив
+        todoInput.value = '';//очищаем строку ввода
+        console.log(list);
+        renderList();
+    }
 }
 
 function renderList() {
@@ -22,7 +24,7 @@ function renderList() {
     let tr;
     let td;
     let tdButton;
-
+    let icon;
     let button;
 
     tbody.innerHTML = '';// очищаем заголовок ul
@@ -30,6 +32,7 @@ function renderList() {
     list.forEach((item, i) => {
         tr = document.createElement('tr');// <tr>...</tr>
         td = document.createElement('td');// <td>...</td>
+        //icon = document.createElement('i');
         tdButton = document.createElement('td'); //<td>...</td>
         td.innerHTML = item.title;// <td>Hello</td>
 
@@ -44,7 +47,10 @@ function renderList() {
             madeDone(e.target.getAttribute('order'));
         });
 
+       // icon.className = 'fas fa-backspace';
+
         tdButton.appendChild(button);//<td><button>Done</button></td>
+        //tdButton.appendChild(icon);//= '<i class="fas fa-backspace"></i>'
 
         if(item.done) td.className = 'done';// <td class="done">Hello</td>
         tr.appendChild(td);//<tr><td>...</td></tr>
