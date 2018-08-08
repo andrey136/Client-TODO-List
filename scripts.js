@@ -1,13 +1,11 @@
 const list = [
-  {title: 'First', done: true},
-  {title: 'Second', done: false}
 ];
 
 renderList();// очищаем заголовок
 
 function madeDone(order){
-  list[order].done = !list[order].done; // елемент массива.done: true;
-  renderList();
+    list[order].done = !list[order].done; // елемент массива.done: true;
+    renderList();
 }
 
 function addTodo() {
@@ -20,28 +18,39 @@ function addTodo() {
 }
 
 function renderList() {
-  const ul = document.getElementById('list');// ul#list
-  let li;
+    const tbody = document.getElementById('list');// ul#list
+    let tr;
+    let td;
+    let tdButton;
 
-  let button;
+    let button;
 
-  ul.innerHTML = '';// очищаем заголовок ul
+    tbody.innerHTML = '';// очищаем заголовок ul
 
-  list.forEach((item, i) => {
-      li = document.createElement('li');// <li></li>
-      li.innerHTML = item.title;// <li>Hello</li>
+    list.forEach((item, i) => {
+        tr = document.createElement('tr');// <tr>...</tr>
+        td = document.createElement('td');// <td>...</td>
+        tdButton = document.createElement('td'); //<td>...</td>
+        td.innerHTML = item.title;// <td>Hello</td>
 
-      button = document.createElement('button');// <button></button>
-      button.innerHTML = 'Done' + i;// <button>Done</button>
-      button.setAttribute('order',i);//присваиваем атрибут <button order="i">Done</button>
+        button = document.createElement('button');// <button></button>type="button" class="btn btn-outline-success"
+        button.typeName = 'button';
+        button.className = 'btn btn-outline-success';
+        button.innerHTML = 'Done';// <button>Done</button>
+        button.setAttribute('order',i);//присваиваем атрибут <button order="i">Done</button>
 
-      button.addEventListener('click', (e)=> {
-          console.log(e.target.getAttribute('order'));
-          madeDone(e.target.getAttribute('order'));
-      });
+        button.addEventListener('click', (e)=> {
+            console.log(e.target.getAttribute('order'));
+            madeDone(e.target.getAttribute('order'));
+        });
 
-      if(item.done) li.className = 'done';// <li class="done">Hello</li>
-      li.appendChild(button);//<li>Hello<button>Done</button></li>
-      ul.append(li);//ul --> <li>Hello<button>Done</button></li>
-  })}
+        tdButton.appendChild(button);//<td><button>Done</button></td>
 
+        if(item.done) td.className = 'done';// <td class="done">Hello</td>
+        tr.appendChild(td);//<tr><td>...</td></tr>
+        tdButton.className = 'th';
+        console.log(tdButton);
+        tr.appendChild(tdButton);//<tr><td>hello</td><td><button>Done</button></td></tr>
+        console.log(tr);
+        tbody.append(tr);//ul --> <li>Hello<button>Done</button></li>
+    })}
