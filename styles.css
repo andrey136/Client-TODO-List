@@ -1,3 +1,17 @@
 .done{
     text-decoration: line-through;
 }
+body{
+    background: bisque;
+}
+table {
+    border-collapse: collapse;
+}
+h1 {
+    /*background: mediumpurple;*/
+    padding-top: 150px;
+    text-align: center;
+    width: 60%;
+    font-size: 60px;
+    margin: -75px auto;
+}
