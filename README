@@ -1,0 +1,17 @@
+Наш проект TODO_List готовится исплользовать новый способ сохранения данных,
+используя XMLHttpRequest().
+Само приложение предназначено для создания собственного списка дел, которые
+можно пометить при их выполнении, или при желании удалить.
+Если вы закроете вкдадку браузера, то наша программа сохранит все, что вы
+запланировали на ближайшее время.
+С этим удобным приложением вам не придется постоянно держать в голове кучу
+забот. Все станет легко и понятно.
+--------------------------------------------------------------------------
+Our project TODO_List is being prepared for usage a new way of keeping
+data due to XMLHttpRequest().
+The application is employed for creating your own todo_list, which can be
+marked or deleted by its implementation/
+If you closed the browser window, our program would save everything you
+had been planning.
+With this useful application you don't need to keep a gigantic list on
+your mind all the time. It's really easy.
