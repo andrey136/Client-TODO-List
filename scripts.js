@@ -1,86 +1,88 @@
-let list = [];
+let arr;
+let count = 0;
 
-renderList();// очищаем заголовок
+if (typeof localStorage.getItem('array') === "string"){
+    arr = JSON.parse(localStorage.getItem('array'));
+} else {
+    arr = [];
+}
+
+if (arr.length > 0) renderList();// очищаем заголовок
 
 function madeDone(order) {
-    list[order].done = !list[order].done; // елемент массива.done: true;
+    let obj = JSON.parse(localStorage.getItem(order));
+    obj.done = !obj.done;
+    localStorage.setItem(order,JSON.stringify(obj));
     renderList();
 }
 
-function del(order){
-    if (+order === 0) {
-        console.log('****');
-        list = list.slice(1);
-        renderList();
-        console.log(list);
-    } else if (+order === list.length - 1) {
-        list = list.slice(0, -1);
-        renderList();
+function del(i){
+    localStorage.removeItem(arr[i]);
+    if (+i === 0) {
+        arr = arr.slice(1);
+    } else if (+i === arr.length - 1) {
+        arr = arr.slice(0, -1);
     } else {
-        let arr = list.slice(0, +order);
-        arr = arr.concat(list.slice(+order + 1));
-        list = arr;
-        renderList();
+        let arr2 = arr.slice(0, +i);
+        arr = arr2.concat(arr.slice(+i + 1));
     }
+    localStorage.setItem('array', JSON.stringify(arr));
+    renderList();
 }
 
 function addTodo() {
     let todoInput = document.getElementById('input');// ввод
     if (todoInput.value !== '') {
         let todoInputValue = todoInput.value;//значение ввода
-        list.push({title: todoInputValue, done: false});// прибавляем объект с tittle: значение ввода в массив
+        localStorage.setItem(count.toString(),JSON.stringify({title: todoInputValue, done: false}));// прибавляем объект с tittle: значение ввода в массив
         todoInput.value = '';//очищаем строку ввода
-        console.log(list);
+        arr.push(count.toString());
+        localStorage.setItem('array', JSON.stringify(arr));
+        count += 1;
         renderList();
     }
 }
 
 function renderList() {
-    const tbody = document.getElementById('list');// ul#list
+    let tbody = document.getElementById('list');// ul#list
     let tr;
     let td;
     let tdButton;
-    let icon;
     let button;
+    let icon;
     tbody.innerHTML = '';// очищаем заголовок ul
 
-    list.forEach((item, i) => {
+    for (let i = 0; i < arr.length; i++) {
+        i = i.toString();
         tr = document.createElement('tr');// <tr>...</tr>
         td = document.createElement('td');// <td>...</td>
-        icon = document.createElement('i');
         tdButton = document.createElement('td'); //<td>...</td>
-        td.innerHTML = item.title;// <td>Hello</td>
-
+        icon = document.createElement('i');
         button = document.createElement('button');// <button></button>type="button" class="btn btn-outline-success"
-        button.typeName = 'button';
-        button.className = 'btn btn-outline-success';
+
         button.innerHTML = 'Done';// <button>Done</button>
-        button.setAttribute('order', i);//присваиваем атрибут <button order="i">Done</button>
-
-        icon.setAttribute('order', i);
-        icon.className = 'fas fa-backspace';
-
-        icon.addEventListener('click', (e) => {
-            console.log('!!!');
-            del(e.target.getAttribute('order'));
-        });
-
+        button.className = 'btn btn-outline-success';
+        button.setAttribute('order', arr[+i]);//присваиваем атрибут <button order="i">Done</button>
         button.addEventListener('click', (e) => {
-            console.log(e.target.getAttribute('order'));
             madeDone(e.target.getAttribute('order'));
         });
 
+        icon.className = 'fas fa-backspace';
+        icon.setAttribute('order', i);
+        icon.addEventListener('click', (e) => {
+            del(e.target.getAttribute('order'));
+        });
 
-
+        tdButton.className = 'th';
         tdButton.appendChild(button);//<td><button>Done</button></td>
         tdButton.appendChild(icon);//= '<i class="fas fa-backspace"></i>'
 
-        if (item.done) td.className = 'done';// <td class="done">Hello</td>
+        td.innerHTML = JSON.parse(localStorage.getItem(arr[+i])).title;// <td>Hello</td>
+        if (JSON.parse(localStorage.getItem(arr[+i])).done) td.className = 'done';// <td class="done">Hello</td>
+
         tr.appendChild(td);//<tr><td>...</td></tr>
-        tdButton.className = 'th';
-        console.log(tdButton);
         tr.appendChild(tdButton);//<tr><td>hello</td><td><button>Done</button></td></tr>
-        console.log(tr);
-        tbody.append(tr);//ul --> <li>Hello<button>Done</button></li>
-    })
+
+        tbody.appendChild(tr);//ul --> <li>Hello<button>Done</button></li>
+    }
 }
