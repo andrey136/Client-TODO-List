@@ -34,11 +34,16 @@ function addTodo() {
     let todoInput = document.getElementById('input');// ввод
     if (todoInput.value !== '') {
         let todoInputValue = todoInput.value;//значение ввода
-        localStorage.setItem(count.toString(),JSON.stringify({title: todoInputValue, done: false}));// прибавляем объект с tittle: значение ввода в массив
+        if (arr.length === 0){
+            localStorage.setItem(count.toString(),JSON.stringify({title: todoInputValue, done: false}));
+            arr.push(count.toString());
+        } else {
+            localStorage.setItem((+arr[arr.length - 1] + 1).toString(),JSON.stringify({title: todoInputValue, done: false}));// прибавляем объект с tittle: значение ввода в массив
+            arr.push((+arr[arr.length - 1] + 1).toString());
+        }
         todoInput.value = '';//очищаем строку ввода
-        arr.push(count.toString());
+
         localStorage.setItem('array', JSON.stringify(arr));
-        count += 1;
         renderList();
     }
 }
