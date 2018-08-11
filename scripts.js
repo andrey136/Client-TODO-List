@@ -125,3 +125,11 @@ function XMLcycle(i, todos){
     arr.push(i);
     renderList();
 }
+
+function clearList(){
+    document.getElementById('input').value = '';
+    localStorage.clear();
+    arr = [];
+    localStorage.setItem('array','[]');
+    renderList();
+}
