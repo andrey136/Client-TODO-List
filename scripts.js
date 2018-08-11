@@ -1,6 +1,12 @@
 let arr;
 let count = 0;
 let count3 = 0;
+let tbody = document.getElementById('list');
+let tr;
+let td;
+let tdButton;
+let button;
+let icon;
 
 if (typeof localStorage.getItem('array') === "string"){
     arr = JSON.parse(localStorage.getItem('array'));
@@ -8,7 +14,7 @@ if (typeof localStorage.getItem('array') === "string"){
     arr = [];
 }
 
-if (arr.length > 0) renderList();// очищаем заголовок
+renderList();// очищаем заголовок
 
 function madeDone(order) {
     let obj = JSON.parse(localStorage.getItem(order));
@@ -50,46 +56,9 @@ function addTodo() {
 }
 
 function renderList() {
-    let tbody = document.getElementById('list');// ul#list
-    let tr;
-    let td;
-    let tdButton;
-    let button;
-    let icon;
     tbody.innerHTML = '';// очищаем заголовок ul
-
     for (let i = 0; i < arr.length; i++) {
-        i = i.toString();
-        tr = document.createElement('tr');// <tr>...</tr>
-        td = document.createElement('td');// <td>...</td>
-        tdButton = document.createElement('td'); //<td>...</td>
-        icon = document.createElement('i');
-        button = document.createElement('button');// <button></button>type="button" class="btn btn-outline-success"
-
-        button.innerHTML = 'Done';// <button>Done</button>
-        button.className = 'btn btn-outline-success';
-        button.setAttribute('order', arr[+i]);//присваиваем атрибут <button order="i">Done</button>
-        button.addEventListener('click', (e) => {
-            madeDone(e.target.getAttribute('order'));
-        });
-
-        icon.className = 'fas fa-backspace';
-        icon.setAttribute('order', i);
-        icon.addEventListener('click', (e) => {
-            del(e.target.getAttribute('order'));
-        });
-
-        tdButton.className = 'th';
-        tdButton.appendChild(button);//<td><button>Done</button></td>
-        tdButton.appendChild(icon);//= '<i class="fas fa-backspace"></i>'
-
-        td.innerHTML = JSON.parse(localStorage.getItem(arr[+i])).title;// <td>Hello</td>
-        if (JSON.parse(localStorage.getItem(arr[+i])).done) td.className = 'done';// <td class="done">Hello</td>
-
-        tr.appendChild(td);//<tr><td>...</td></tr>
-        tr.appendChild(tdButton);//<tr><td>hello</td><td><button>Done</button></td></tr>
-
-        tbody.appendChild(tr);//ul --> <li>Hello<button>Done</button></li>
+        renderCycle(i);
     }
 }
 
@@ -106,7 +75,8 @@ function loadTodo() {
                 done: el.completed
             }));
             if (arr.length === 0) {
-                for(let i = 0; i < todos.length; i++){
+                console.log(arr);
+                 for(let i = 0; i < todos.length; i++){
                     XMLcycle(i,todos)
                 }
             } else {
@@ -123,13 +93,49 @@ function XMLcycle(i, todos){
     localStorage.setItem(i, JSON.stringify(todos[count3]));
     count3++;
     arr.push(i);
-    renderList();
+    renderCycle(i);
 }
 
 function clearList(){
+    let count = 0;
+    let count3 = 0;
     document.getElementById('input').value = '';
     localStorage.clear();
     arr = [];
     localStorage.setItem('array','[]');
     renderList();
+}
+
+function renderCycle(i) {
+    i = i.toString();
+    tr = document.createElement('tr');// <tr>...</tr>
+    td = document.createElement('td');// <td>...</td>
+    tdButton = document.createElement('td'); //<td>...</td>
+    icon = document.createElement('i');
+    button = document.createElement('button');// <button></button>type="button" class="btn btn-outline-success"
+
+    button.innerHTML = 'Done';// <button>Done</button>
+    button.className = 'btn btn-outline-success';
+    button.setAttribute('order', arr[+i]);//присваиваем атрибут <button order="i">Done</button>
+    button.addEventListener('click', (e) => {
+        madeDone(e.target.getAttribute('order'));
+    });
+
+    icon.className = 'fas fa-backspace';
+    icon.setAttribute('order', i);
+    icon.addEventListener('click', (e) => {
+        del(e.target.getAttribute('order'));
+    });
+
+    tdButton.className = 'th';
+    tdButton.appendChild(button);//<td><button>Done</button></td>
+    tdButton.appendChild(icon);//= '<i class="fas fa-backspace"></i>'
+
+    td.innerHTML = JSON.parse(localStorage.getItem(arr[+i])).title;// <td>Hello</td>
+    if (JSON.parse(localStorage.getItem(arr[+i])).done) td.className = 'done';// <td class="done">Hello</td>
+
+    tr.appendChild(td);//<tr><td>...</td></tr>
+    tr.appendChild(tdButton);//<tr><td>hello</td><td><button>Done</button></td></tr>
+
+    tbody.appendChild(tr);//ul --> <li>Hello<button>Done</button></li>
 }
