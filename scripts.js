@@ -1,5 +1,6 @@
 let arr;
 let count = 0;
+let count3 = 0;
 
 if (typeof localStorage.getItem('array') === "string"){
     arr = JSON.parse(localStorage.getItem('array'));
@@ -90,4 +91,39 @@ function renderList() {
 
         tbody.appendChild(tr);//ul --> <li>Hello<button>Done</button></li>
     }
+}
+
+function loadTodo() {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET','https://jsonplaceholder.typicode.com/todos', true);
+    xhr.send();
+
+    let todos = [];
+    xhr.onreadystatechange = function(){
+        if(xhr.readyState === 4){
+            todos = JSON.parse(xhr.responseText).map(el => ({
+                ...el,
+                done: el.completed
+            }));
+            console.log(todos[count3]);
+            if (arr.length === 0) {
+                for(let i = 0; i < todos.length; i++){
+                    XMLcycle(i,todos)
+                }
+            } else {
+                for (let i = +arr[arr.length - 1] + 1; i < i + todos.length; i++){
+                    XMLcycle(i, todos);
+                }
+            }
+        }
+    }
+}
+
+function XMLcycle(i, todos){
+    i = i.toString();
+    console.log(i);
+    localStorage.setItem(i, JSON.stringify(todos[count3]));
+    count3++;
+    arr.push(i);
+    renderList();
 }
