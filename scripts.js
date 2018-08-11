@@ -105,7 +105,6 @@ function loadTodo() {
                 ...el,
                 done: el.completed
             }));
-            console.log(todos[count3]);
             if (arr.length === 0) {
                 for(let i = 0; i < todos.length; i++){
                     XMLcycle(i,todos)
@@ -121,7 +120,6 @@ function loadTodo() {
 
 function XMLcycle(i, todos){
     i = i.toString();
-    console.log(i);
     localStorage.setItem(i, JSON.stringify(todos[count3]));
     count3++;
     arr.push(i);
