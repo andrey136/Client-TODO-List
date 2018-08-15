@@ -1,39 +1,31 @@
-let arr;
-let count = 0;
-let count3 = 0;
-let tbody = document.getElementById('list');
-let tr;
-let td;
-let tdButton;
-let button;
-let icon;
+let list;
 
-if (typeof localStorage.getItem('array') === "string"){
-    arr = JSON.parse(localStorage.getItem('array'));
+if (typeof localStorage.getItem('array') === 'string'){
+    list = JSON.parse(localStorage.getItem('array'));
 } else {
-    arr = [];
+    list = [];
 }
 
 renderList();// очищаем заголовок
 
 function madeDone(order) {
-    let obj = JSON.parse(localStorage.getItem(order));
-    obj.done = !obj.done;
-    localStorage.setItem(order,JSON.stringify(obj));
+    list[order].done = !list[order].done; // елемент массива.done: true;
     renderList();
 }
 
-function del(i){
-    localStorage.removeItem(arr[i]);
-    if (+i === 0) {
-        arr = arr.slice(1);
-    } else if (+i === arr.length - 1) {
-        arr = arr.slice(0, -1);
+function del(order){
+    if (list.length === 1){
+      list = [];
+      localStorage.removeItem('array');
+    } else if (+order === 0) {
+        list = list.slice(1);
+    } else if (+order === list.length - 1) {
+        list = list.slice(0, -1);
     } else {
-        let arr2 = arr.slice(0, +i);
-        arr = arr2.concat(arr.slice(+i + 1));
+        let arr = list.slice(0, +order);
+        arr = arr.concat(list.slice(+order + 1));
+        list = arr;
     }
-    localStorage.setItem('array', JSON.stringify(arr));
     renderList();
 }
 
@@ -41,25 +33,49 @@ function addTodo() {
     let todoInput = document.getElementById('input');// ввод
     if (todoInput.value !== '') {
         let todoInputValue = todoInput.value;//значение ввода
-        if (arr.length === 0){
-            localStorage.setItem(count.toString(),JSON.stringify({title: todoInputValue, done: false}));
-            arr.push(count.toString());
-        } else {
-            localStorage.setItem((+arr[arr.length - 1] + 1).toString(),JSON.stringify({title: todoInputValue, done: false}));// прибавляем объект с tittle: значение ввода в массив
-            arr.push((+arr[arr.length - 1] + 1).toString());
-        }
+        list.push({title: todoInputValue, done: false});// прибавляем объект с tittle: значение ввода в массив
         todoInput.value = '';//очищаем строку ввода
-
-        localStorage.setItem('array', JSON.stringify(arr));
+        localStorage.setItem('array', JSON.stringify(list));
         renderList();
     }
 }
 
 function renderList() {
+    const tbody = document.getElementById('list');// ul#list
     tbody.innerHTML = '';// очищаем заголовок ul
-    for (let i = 0; i < arr.length; i++) {
-        renderCycle(i);
-    }
+
+    list.map((item, i) => {
+        let tr = document.createElement('tr');// <tr>...</tr>
+        let td = document.createElement('td');// <td>...</td>
+        let icon = document.createElement('i');
+        let tdButton = document.createElement('td'); //<td>...</td>
+        td.innerHTML = item.title;// <td>Hello</td>
+
+        let button = document.createElement('button');// <button></button>type="button" class="btn btn-outline-success"
+        button.typeName = 'button';
+        button.className = 'btn btn-outline-success';
+        button.innerHTML = 'Done';// <button>Done</button>
+        button.setAttribute('order', i);//присваиваем атрибут <button order="i">Done</button>
+        button.addEventListener('click', (e) => {
+            madeDone(e.target.getAttribute('order'));
+        });
+
+        icon.setAttribute('order', i);
+        icon.className = 'fas fa-backspace';
+        icon.addEventListener('click', (e) => {
+            del(e.target.getAttribute('order'));
+        });
+
+        tdButton.appendChild(button);//<td><button>Done</button></td>
+        tdButton.appendChild(icon);//= '<i class="fas fa-backspace"></i>'
+
+        if (item.done) td.className = 'done';// <td class="done">Hello</td>
+        tr.appendChild(td);//<tr><td>...</td></tr>
+        tdButton.className = 'th';
+        tr.appendChild(tdButton);//<tr><td>hello</td><td><button>Done</button></td></tr>
+        tbody.append(tr);//ul --> <li>Hello<button>Done</button></li>
+        localStorage.setItem('array',JSON.stringify(list));
+    })
 }
 
 function loadTodo() {
@@ -68,74 +84,22 @@ function loadTodo() {
     xhr.send();
 
     let todos = [];
-    xhr.onreadystatechange = function(){
-        if(xhr.readyState === 4){
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
             todos = JSON.parse(xhr.responseText).map(el => ({
                 ...el,
                 done: el.completed
             }));
-            if (arr.length === 0) {
-                console.log(arr);
-                 for(let i = 0; i < todos.length; i++){
-                    XMLcycle(i,todos)
-                }
-            } else {
-                for (let i = +arr[arr.length - 1] + 1; i < i + todos.length; i++){
-                    XMLcycle(i, todos);
-                }
-            }
+            list = list.concat(todos);
+            localStorage.setItem('array', JSON.stringify(list));
+            renderList();
         }
     }
 }
 
-function XMLcycle(i, todos){
-    i = i.toString();
-    localStorage.setItem(i, JSON.stringify(todos[count3]));
-    count3++;
-    arr.push(i);
-    renderCycle(i);
-}
-
 function clearList(){
-    let count = 0;
-    let count3 = 0;
     document.getElementById('input').value = '';
     localStorage.clear();
-    arr = [];
-    localStorage.setItem('array','[]');
+    list = [];
     renderList();
-}
-
-function renderCycle(i) {
-    i = i.toString();
-    tr = document.createElement('tr');// <tr>...</tr>
-    td = document.createElement('td');// <td>...</td>
-    tdButton = document.createElement('td'); //<td>...</td>
-    icon = document.createElement('i');
-    button = document.createElement('button');// <button></button>type="button" class="btn btn-outline-success"
-
-    button.innerHTML = 'Done';// <button>Done</button>
-    button.className = 'btn btn-outline-success';
-    button.setAttribute('order', arr[+i]);//присваиваем атрибут <button order="i">Done</button>
-    button.addEventListener('click', (e) => {
-        madeDone(e.target.getAttribute('order'));
-    });
-
-    icon.className = 'fas fa-backspace';
-    icon.setAttribute('order', i);
-    icon.addEventListener('click', (e) => {
-        del(e.target.getAttribute('order'));
-    });
-
-    tdButton.className = 'th';
-    tdButton.appendChild(button);//<td><button>Done</button></td>
-    tdButton.appendChild(icon);//= '<i class="fas fa-backspace"></i>'
-
-    td.innerHTML = JSON.parse(localStorage.getItem(arr[+i])).title;// <td>Hello</td>
-    if (JSON.parse(localStorage.getItem(arr[+i])).done) td.className = 'done';// <td class="done">Hello</td>
-
-    tr.appendChild(td);//<tr><td>...</td></tr>
-    tr.appendChild(tdButton);//<tr><td>hello</td><td><button>Done</button></td></tr>
-
-    tbody.appendChild(tr);//ul --> <li>Hello<button>Done</button></li>
 }
