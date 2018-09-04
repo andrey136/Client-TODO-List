@@ -31,13 +31,24 @@ function del(order){
 
 function addTodo() {
     let todoInput = document.getElementById('input');// ввод
-    if (todoInput.value !== '') {
-        let todoInputValue = todoInput.value;//значение ввода
-        list.push({title: todoInputValue, done: false});// прибавляем объект с tittle: значение ввода в массив
-        todoInput.value = '';//очищаем строку ввода
-        localStorage.setItem('array', JSON.stringify(list));
-        renderList();
+    let todoInputValue = todoInput.value;//значение ввода
+    if (todoInput.value) {
+        axios.post('http://localhost:5000/post', {
+            title: todoInputValue
+        })
+            .then(function (response) {
+                console.log(response.data);
+                clearList();
+                loadTodo();
+            })
+            .catch(function (error) {
+                console.log('ERROR', error);
+            });
+        //list.push({title: todoInputValue, done: false});// прибавляем объект с tittle: значение ввода в массив
     }
+    todoInput.value = '';//очищаем строку ввода
+    localStorage.setItem('array', JSON.stringify(list));
+    renderList();
 }
 
 function renderList() {
@@ -79,23 +90,19 @@ function renderList() {
 }
 
 function loadTodo() {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET','http://localhost:5000', true);
-    xhr.send();
-
-    let todos = [];
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            console.log(xhr.responseText);
-            todos = JSON.parse(xhr.responseText).map(el => ({
-                ...el,
-                done: el.completed
-            }));
-            list = list.concat(todos);
-            localStorage.setItem('array', JSON.stringify(list));
-            renderList();
-        }
-    }
+  axios.get('http://localhost:5000')
+      .then(function (response) {
+          const todos = response.data.map(el => ({
+              ...el,
+              done: el.completed
+          }));
+          list = list.concat(todos);
+          localStorage.setItem('array', JSON.stringify(list));
+          renderList();
+      })
+      .catch(function (error) {
+          console.log('ERROR', error);
+      });
 }
 
 function clearList(){
