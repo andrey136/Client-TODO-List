@@ -80,12 +80,13 @@ function renderList() {
 
 function loadTodo() {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET','https://jsonplaceholder.typicode.com/todos', true);
+    xhr.open('GET','http://localhost:5000', true);
     xhr.send();
 
     let todos = [];
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
+            console.log(xhr.responseText);
             todos = JSON.parse(xhr.responseText).map(el => ({
                 ...el,
                 done: el.completed
